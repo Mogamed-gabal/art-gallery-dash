@@ -1,0 +1,78 @@
+<section *ngIf="visible" class="page-stack">
+  <div class="page-toolbar">
+    <div>
+      <span class="eyebrow">الطلبات المخصصة</span>
+      <h2>طلبات اللوحات الخاصة (Commissions)</h2>
+      <p>طلبات العملاء لتنفيذ لوحات وأعمال فنية خاصة مع الصور المرجعية المرفقة.</p>
+    </div>
+    <button class="soft-button" (click)="refresh()">↻ تحديث الطلبات</button>
+  </div>
+
+  <div class="filter-row">
+    <div class="table-search">
+      ⌕
+      <input [(ngModel)]="search" placeholder="ابحث باسم العميل أو رقم الهاتف أو الوصف..." />
+    </div>
+    <span class="muted-note">إجمالي الطلبات: <strong>{{ requests.length }}</strong></span>
+  </div>
+
+  <div *ngIf="loading" class="empty-art-note">جارٍ تحميل طلبات العملاء…</div>
+
+  <div *ngIf="!loading && !filteredRequests.length" class="empty-art-note">
+    لا توجد طلبات لوحات خاصة حالياً.
+  </div>
+
+  <div *ngIf="!loading && filteredRequests.length" class="requests-grid">
+    <article *ngFor="let req of filteredRequests" class="request-card">
+      <header class="request-card__header">
+        <div class="request-card__user">
+          <div class="mini-avatar">{{ (req.name || 'ع').charAt(0) }}</div>
+          <div>
+            <h3>{{ req.name || 'عميل بدون اسم' }}</h3>
+            <span class="request-date">{{ req.createdAt | date:'yyyy/MM/dd - hh:mm a' }}</span>
+          </div>
+        </div>
+        <div class="request-card__actions">
+          <a [href]="getWhatsAppLink(req)" target="_blank" class="action-btn wa-btn" title="محادثة واتساب مباشرة">
+            💬 واتساب
+          </a>
+          <a [href]="'tel:' + req.phone" class="action-btn call-btn" title="اتصال هاتفي">
+            📞 اتصال
+          </a>
+        </div>
+      </header>
+
+      <div class="request-card__contacts">
+        <span><strong>الهاتف:</strong> {{ req.phone }}</span>
+        <span *ngIf="req.whatsapp"><strong>الواتساب:</strong> {{ req.whatsapp }}</span>
+        <span *ngIf="req.email"><strong>البريد:</strong> {{ req.email }}</span>
+      </div>
+
+      <div class="request-card__desc">
+        <span class="desc-label">وصف فكرة اللوحة والمقاس المطلوب:</span>
+        <p>{{ req.description }}</p>
+      </div>
+
+      <div class="request-card__gallery" *ngIf="req.images && req.images.length">
+        <span class="gallery-label">الصور المرجعية المرفقة ({{ req.images.length }} صور):</span>
+        <div class="images-thumbs">
+          <div *ngFor="let img of req.images" class="thumb-wrap" (click)="openImage(img)">
+            <img [src]="img" alt="صورة مرجعية" loading="lazy" />
+            <span class="zoom-badge">🔍</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Image Modal -->
+  <div *ngIf="selectedImageModal" class="img-modal-backdrop" (click)="closeModal()">
+    <div class="img-modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">✕</button>
+      <img [src]="selectedImageModal" alt="صورة مكبرة" />
+      <div class="modal-actions">
+        <a [href]="selectedImageModal" target="_blank" class="soft-button">فتح الصورة بالحجم الأصلي ↗</a>
+      </div>
+    </div>
+  </div>
+</section>

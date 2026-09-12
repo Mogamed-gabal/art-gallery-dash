@@ -1,0 +1,3 @@
+import { Pipe, PipeTransform } from '@angular/core';
+@Pipe({ name: 'currencyFormat', standalone: true }) export class CurrencyFormatPipe implements PipeTransform { transform(value: string | number | null | undefined) { if (value === null || value === undefined || value === '') return '—'; return `${new Intl.NumberFormat('ar-EG').format(Number(value))} ج.م`; } }
+@Pipe({ name: 'statusBadge', standalone: true }) export class StatusBadgePipe implements PipeTransform { transform(status: string) { const labels: Record<string, string> = { PAID: 'مدفوع', PENDING: 'بانتظار الدفع', PROCESSING: 'قيد التنفيذ', SHIPPED: 'تم الشحن', DELIVERED: 'مكتمل', CANCELLED: 'ملغي' }; return labels[status] ?? status; } }

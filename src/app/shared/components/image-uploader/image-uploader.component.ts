@@ -1,0 +1,3 @@
+import { Component, EventEmitter, Output } from '@angular/core';
+@Component({ selector: 'app-image-uploader', standalone: true, styleUrl: './image-uploader.scss', template: `<label class="upload-dropzone"><span class="upload-icon">↑</span><strong>اسحبي الصور هنا</strong><small>PNG أو JPG حتى 10MB</small><input type="file" accept="image/*" multiple (change)="choose($event)"></label>` })
+export class ImageUploaderComponent { @Output() filesSelected = new EventEmitter<File[]>(); choose(event: Event) { const input = event.target as HTMLInputElement; this.filesSelected.emit(Array.from(input.files ?? [])); } }

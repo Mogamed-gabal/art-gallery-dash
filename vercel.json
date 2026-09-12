@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "buildCommand": "pnpm exec ng build --configuration production",
+  "outputDirectory": "dist/art-gallery-admin-angular/browser",
+  "installCommand": "pnpm install --frozen-lockfile"
+}

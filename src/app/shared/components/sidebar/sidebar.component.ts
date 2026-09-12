@@ -1,0 +1,5 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { dashboardNav, ViewKey } from '../../../core/models/dashboard.models';
+@Component({ selector: 'app-sidebar', standalone: true, imports: [CommonModule], styleUrl: './sidebar.scss', template: `<aside class="sidebar"><div class="sidebar-top"><div class="brand-lockup"><div class="brand-mark">▥</div><div><strong>مرسم</strong><span>لوحة الإدارة</span></div></div></div><div class="sidebar-caption">مساحة العمل</div><nav><button *ngFor="let item of nav" class="nav-item" [class.active]="active === item.key" (click)="navigate.emit(item.key)"><span class="nav-symbol">{{ item.icon }}</span><span>{{ item.label }}</span></button></nav><div class="sidebar-spacer"></div><button class="nav-item logout" (click)="logout.emit()"><span class="nav-symbol">↪</span><span>تسجيل الخروج</span></button></aside>` })
+export class SidebarComponent { @Input() active: ViewKey = 'overview'; @Output() navigate = new EventEmitter<ViewKey>(); @Output() logout = new EventEmitter<void>(); readonly nav = dashboardNav; }

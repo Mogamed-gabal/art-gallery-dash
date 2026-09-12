@@ -1,0 +1,9 @@
+services:
+  art-gallery-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: art-gallery-admin-angular
+    ports:
+      - "4200:80"
+    restart: unless-stopped

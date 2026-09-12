@@ -1,0 +1,57 @@
+<section *ngIf="visible" class="page-stack courses-page">
+  <div class="page-toolbar">
+    <div>
+      <span class="eyebrow">المعرفة التي تبقى</span>
+      <h2>دليل الكورسات</h2>
+      <p>معلومات تعريفية وفيديوهات ترحيبية وروابط الانتقال إلى منصة الكورسات الخارجية.</p>
+    </div>
+    <button class="primary-button compact" (click)="openCreate()">＋ إضافة كورس</button>
+  </div>
+
+  <div *ngIf="loading" class="empty-art-note">جارٍ تحميل الكورسات…</div>
+  <div *ngIf="!loading && !courses.length" class="empty-art-note">لا توجد كورسات مسجلة بعد.</div>
+
+  <div *ngIf="courses.length" class="course-table-wrap">
+    <table class="course-table">
+      <thead>
+        <tr>
+          <th>اسم الكورس</th>
+          <th>الوصف</th>
+          <th>الفيديو التعريفي</th>
+          <th>الرابط الخارجي</th>
+          <th>الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of courses">
+          <td data-label="الاسم">
+            <strong>{{ course.title }}</strong>
+          </td>
+          <td data-label="الوصف">
+            <span class="description-cell">{{ course.description }}</span>
+          </td>
+          <td data-label="الفيديو">
+            <a *ngIf="course.welcomeVideoUrl" [href]="course.welcomeVideoUrl" target="_blank" rel="noopener noreferrer" class="course-video-pill">
+              🎬 مشاهدة الفيديو ↗
+            </a>
+            <span *ngIf="!course.welcomeVideoUrl" class="no-video-pill">بدون فيديو</span>
+          </td>
+          <td data-label="الرابط">
+            <a class="external-course-link" [href]="course.externalUrl" target="_blank" rel="noopener noreferrer">فتح المنصة ↗</a>
+          </td>
+          <td data-label="الحالة">
+            <span class="status-pill" [class.inactive]="!course.isActive">{{ course.isActive ? 'فعال' : 'غير فعال' }}</span>
+          </td>
+          <td data-label="الإجراءات" class="table-actions">
+            <button class="soft-button" (click)="openEdit(course)">تحرير</button>
+            <button class="danger-text" (click)="remove(course)">حذف</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-course-form-modal *ngIf="showForm" [course]="editing" (save)="save($event)" (cancel)="close()"></app-course-form-modal>
+</section>
+

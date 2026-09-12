@@ -1,0 +1,78 @@
+<div class="dialog-backdrop">
+  <section class="confirm-dialog course-editor">
+    <div class="editor-heading">
+      <div>
+        <span class="eyebrow">دليل الكورسات</span>
+        <h3>{{ course ? 'تعديل الكورس' : 'إضافة كورس جديد' }}</h3>
+      </div>
+      <button type="button" class="soft-button" (click)="cancel.emit()">إغلاق</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        اسم الكورس
+        <input formControlName="title" placeholder="مثال: أساسيات الرسم الزيتي وتقنيات المزج">
+        <small class="field-error" *ngIf="form.controls.title.invalid && form.controls.title.touched">اسم الكورس مطلوب</small>
+      </label>
+
+      <label>
+        الوصف
+        <textarea rows="4" formControlName="description" placeholder="وصف تعريفي شامل يوضح مخرجات الكورس والمستهدفين"></textarea>
+        <small class="field-error" *ngIf="form.controls.description.invalid && form.controls.description.touched">الوصف مطلوب</small>
+      </label>
+
+      <label>
+        رابط منصة الكورس الخارجية
+        <input type="url" formControlName="externalUrl" placeholder="https://courses.example.com/course-link">
+        <small class="field-error" *ngIf="form.controls.externalUrl.invalid && form.controls.externalUrl.touched">يجب إدخال رابط يبدأ بـ https://</small>
+      </label>
+
+      <!-- رفع الفيديو الترحيبي -->
+      <div class="video-manager">
+        <label class="video-section-label">فيديو ترحيبي / تعريفي للكورس <em>(اختياري)</em></label>
+
+        <!-- في حال وجود فيديو حالي -->
+        <div *ngIf="existingVideoUrl && !selectedVideoFile" class="current-video-box">
+          <div class="current-video-text">
+            <span>🎬 يوجد فيديو ترحيبي محفوظ للكورس</span>
+          </div>
+          <a [href]="existingVideoUrl" target="_blank" rel="noopener noreferrer" class="preview-video-btn">
+            مشاهدة الفيديو ↗
+          </a>
+        </div>
+
+        <!-- في حال تم اختيار ملف فيديو جديد -->
+        <div *ngIf="selectedVideoFile" class="selected-video-card">
+          <div class="video-info">
+            <span class="video-icon">🎥</span>
+            <div>
+              <strong>{{ selectedVideoName }}</strong>
+              <small>{{ (selectedVideoFile.size / (1024 * 1024)).toFixed(1) }} ميجابايت (جاهز للرفع والتحديث)</small>
+            </div>
+          </div>
+          <button type="button" class="remove-video-btn" (click)="removeVideo()" title="إلغاء الفيديو">✕</button>
+        </div>
+
+        <!-- صندوق رفع الفيديو -->
+        <label *ngIf="!selectedVideoFile" class="video-uploader-dropzone">
+          <input type="file" accept="video/mp4,video/webm,video/quicktime" (change)="chooseVideo($event)">
+          <div class="video-dropzone-inner">
+            <span class="video-upload-icon">📹</span>
+            <strong>{{ existingVideoUrl ? 'تغيير الفيديو (رفع فيديو بديل)' : 'اضغط لاختيار فيديو ترحيبي للكورس' }}</strong>
+            <small>ملف MP4 أو WebM أو MOV بحد أقصى 100 ميجابايت</small>
+          </div>
+        </label>
+      </div>
+
+      <label class="check-line">
+        <input type="checkbox" formControlName="isActive"> إظهار الكورس للزوار في الموقع
+      </label>
+
+      <div class="dialog-actions">
+        <button type="button" class="soft-button" (click)="cancel.emit()">إلغاء</button>
+        <button type="submit" class="primary-button" [disabled]="form.invalid">حفظ بيانات الكورس</button>
+      </div>
+    </form>
+  </section>
+</div>
+

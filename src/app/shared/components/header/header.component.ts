@@ -1,0 +1,3 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+@Component({ selector: 'app-header', standalone: true, styleUrl: './header.scss', template: `<header class="topbar"><div class="topbar-heading"><h1>{{ title }}</h1><p>{{ subtitle }}</p></div><div class="topbar-actions"><div class="search-box">⌕<input placeholder="ابحثي في المرسم"></div><button class="icon-button" (click)="notify.emit()">♢</button><button class="avatar-button">م</button></div></header>` })
+export class HeaderComponent { @Input() title = ''; @Input() subtitle = ''; @Output() notify = new EventEmitter<void>(); }

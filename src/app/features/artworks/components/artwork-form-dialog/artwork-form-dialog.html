@@ -1,0 +1,111 @@
+<div class="dialog-backdrop">
+  <section class="confirm-dialog artwork-editor">
+    <div class="editor-heading">
+      <div>
+        <span class="eyebrow">بيانات العمل</span>
+        <h3>إضافة أو تعديل عمل فني</h3>
+      </div>
+      <button type="button" class="soft-button" (click)="cancel.emit()">إغلاق</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label>العنوان بالعربية
+          <input formControlName="titleAr" placeholder="مثال: لوحة الغروب">
+        </label>
+        <label>العنوان بالإنجليزية
+          <input formControlName="titleEn" placeholder="e.g. Sunset Horizon">
+        </label>
+        <label>القصة بالعربية
+          <textarea formControlName="storyAr" placeholder="حكاية العمل الفني وخلفيته الإبداعية..."></textarea>
+        </label>
+        <label>القصة بالإنجليزية
+          <textarea formControlName="storyEn" placeholder="The story and inspiration behind this piece..."></textarea>
+        </label>
+        <label>السعر (ج.م)
+          <input type="number" min="0.01" step="0.01" formControlName="price">
+          <small class="field-error" *ngIf="form.controls.price.invalid && form.controls.price.touched">السعر يجب أن يكون أكبر من صفر</small>
+        </label>
+        <label>سعر الخصم <em>(اختياري)</em>
+          <input type="number" min="0" step="0.01" formControlName="discountPrice">
+          <small>اتركيه فارغاً إذا لم يوجد خصم</small>
+        </label>
+        <label>الكمية المتاحة
+          <input type="number" min="0" formControlName="quantity">
+        </label>
+        <label>التصنيف
+          <select formControlName="categoryId">
+            <option value="">اختاري تصنيفاً للعمل</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.nameAr }} — {{ category.nameEn }}</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="checkbox-row">
+        <label class="check-line">
+          <input type="checkbox" formControlName="onSale"> العمل في التخفيض
+        </label>
+        <label class="check-line">
+          <input type="checkbox" formControlName="isBestSeller"> تمييز كعمل مميز (Best Seller)
+        </label>
+      </div>
+
+      <!-- صور العمل الفني -->
+      <div class="images-manager">
+        <div class="images-header">
+          <div>
+            <span class="images-title">صور العمل الفني (بحد أقصى 5 صور)</span>
+            <p class="images-hint">يمكنك رفع صور متعددة وتحديد الصورة الرئيسية التي ستظهر في المعرض أولاً.</p>
+          </div>
+          <span class="count-badge" [class.full]="files.length >= 5">{{ files.length }} / 5 صور محددة</span>
+        </div>
+
+        <!-- في حالة التعديل ولم يتم اختيار صور جديدة بعد -->
+        <div *ngIf="existingImages && !files.length" class="existing-box">
+          <span class="existing-title">الصور الحالية المحفوظة:</span>
+          <div class="preview-grid">
+            <div *ngFor="let img of existingArtworkImages" class="preview-card existing">
+              <img [src]="img.url" alt="صورة العمل">
+              <span *ngIf="img.isPrimary" class="primary-tag">الرئيسية ⭐</span>
+            </div>
+          </div>
+          <small class="existing-note">ملاحظة: رفع صور جديدة أدناه سيقوم باستبدال الصور السابقة للعمل.</small>
+        </div>
+
+        <!-- معاينة الصور المختارة الجديدة -->
+        <div *ngIf="previews.length" class="preview-grid">
+          <div *ngFor="let preview of previews; let i = index" class="preview-card" [class.primary-card]="form.controls.primaryImageIndex.value === i">
+            <img [src]="preview" [alt]="'صورة ' + (i + 1)">
+            <div class="card-badge" *ngIf="form.controls.primaryImageIndex.value === i">
+              <span>الرئيسية ⭐</span>
+            </div>
+            <div class="card-actions">
+              <button *ngIf="form.controls.primaryImageIndex.value !== i" type="button" class="btn-make-primary" (click)="setPrimary(i)">
+                تعيين كرئيسية
+              </button>
+              <button type="button" class="btn-remove-img" (click)="removeFile(i)" title="إزالة هذه الصورة">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- حقل رفع الصور -->
+        <label *ngIf="files.length < 5" class="uploader-dropzone">
+          <input type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="choose($event)">
+          <div class="dropzone-content">
+            <span class="dropzone-icon">📷</span>
+            <strong>{{ files.length ? 'إضافة المزيد من الصور' : 'اضغط لاختيار صور العمل الفني' }}</strong>
+            <small>JPG، PNG، WebP بحد أقصى 5 ميجابايت لكل صورة</small>
+          </div>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="soft-button" (click)="cancel.emit()">إلغاء</button>
+        <button type="submit" class="primary-button" [disabled]="form.invalid || (!files.length && !existingImages)">
+          حفظ بيانات العمل
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
