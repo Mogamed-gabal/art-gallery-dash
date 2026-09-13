@@ -10,7 +10,7 @@ declare global {
 @Injectable({ providedIn: 'root' })
 export class HttpBaseService {
   protected readonly http = inject(HttpClient);
-  protected readonly baseUrl = globalThis.window?.__APP_CONFIG__?.apiBaseUrl ?? 'http://localhost:3005/api/v1';
+  protected readonly baseUrl = globalThis.window?.__APP_CONFIG__?.apiBaseUrl ?? 'https://art-gallery-infa.vercel.app/api/v1';
   protected unwrap<T>(response: T | ApiPayload<T>): T { return response && typeof response === 'object' && 'data' in response ? (response as ApiPayload<T>).data : response as T; }
   protected params(values: Record<string, string | number | boolean | undefined>) { let params = new HttpParams(); Object.entries(values).forEach(([key, value]) => { if (value !== undefined) params = params.set(key, String(value)); }); return params; }
   protected get<T>(path: string, query: Record<string, string | number | boolean | undefined> = {}): Observable<T> { return this.http.get<T | ApiPayload<T>>(`${this.baseUrl}${path}`, { params: this.params(query) }).pipe(map(value => this.unwrap(value))); }
