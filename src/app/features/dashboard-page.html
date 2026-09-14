@@ -1,1 +1,167 @@
-<div class="app-shell"><aside class="sidebar"><div class="sidebar-top"><div class="brand-lockup"><div class="brand-mark">▥</div><div><strong>AnasYa3qub</strong><span>لوحة الإدارة</span></div></div><button class="icon-button mobile-menu">☰</button></div><div class="sidebar-caption">مساحة العمل</div><nav><button *ngFor="let item of navItems" class="nav-item" [class.active]="isActive(item.key)" (click)="selectView(item.key)"><span class="nav-symbol">{{ item.icon }}</span><span>{{ item.label }}</span><i *ngIf="item.key === 'orders' && orders.length" class="nav-count">{{ orders.length }}</i><i *ngIf="item.key === 'requests' && clientRequests.length" class="nav-count">{{ clientRequests.length }}</i></button></nav><div class="sidebar-spacer"></div><button class="nav-item logout" (click)="logout()"><span class="nav-symbol">↪</span><span>تسجيل الخروج</span></button><div class="sidebar-footer"><span class="status-dot"></span> النظام متصل ويعمل بنجاح <span>v1.0</span></div></aside><main class="main-area"><header class="topbar"><div class="topbar-heading"><span class="mobile-breadcrumb">لوحة التحكم /</span><h1>{{ pageTitle }}</h1><p>{{ pageSubtitle }}</p></div><div class="topbar-actions"><div class="search-box">⌕<input placeholder="ابحثي في المرسم" (input)="globalSearch($event)"><kbd>⌘ K</kbd></div><button class="icon-button" (click)="action('لا توجد تنبيهات جديدة')">♢</button><button class="avatar-button">م</button></div></header><div class="page-content"><section *ngIf="active === 'overview'" class="page-stack"><section class="welcome-banner"><div class="banner-art"><div class="banner-circle circle-one"></div><div class="banner-circle circle-two"></div><span class="banner-script">فَنّ</span></div><div class="welcome-copy"><span class="eyebrow light">بيانات مباشرة</span><h2>مساحة إدارة AnasYa3qub <span>✦</span></h2><p>إدارة الأعمال والطلبات والكورسات ومحتوى المعرض من مكان واحد.</p></div><button class="banner-action" (click)="selectView('artworks')">إضافة عمل جديد ＋</button></section><div class="metrics-grid"><article *ngFor="let stat of stats; let i = index" class="metric-card" [class]="'metric-' + stat.tone"><div class="metric-top"><div class="metric-icon">{{ stat.icon }}</div><span class="metric-index">٠{{ i + 1 }}</span></div><span class="metric-label">{{ stat.label }}</span><strong>{{ stat.value }}</strong><div class="metric-delta">{{ stat.delta }}</div></article></div><div class="dashboard-grid"><section class="panel orders-panel"><div class="section-title"><div><span class="eyebrow">آخر الحركة</span><h2>الطلبات الأخيرة</h2></div><button class="text-button" (click)="selectView('orders')">كل الطلبات ←</button></div><div class="order-table"><div class="table-head"><span>رقم الطلب</span><span>العميلة</span><span>العنصر</span><span>الحالة</span><span>الإجمالي</span></div><div *ngFor="let order of orders.slice(0, 5)" class="table-row"><span class="order-id">{{ order.orderNumber }}</span><span class="customer-cell"><span class="mini-avatar">{{ order.customerName.charAt(0) }}</span>{{ order.customerName }}</span><span class="muted-cell">{{ order.items.length || 0 }} عنصر</span><span><span class="status-pill" [class]="statusTone(order.orderStatus)"><i></i>{{ statusLabel(order.orderStatus) }}</span></span><strong class="amount-cell">{{ order.totalAmount }} ج.م</strong></div></div></section><section class="panel pulse-panel"><div class="section-title"><div><span class="eyebrow">المعرض الآن</span><h2>أحدث الأعمال</h2></div><button class="text-button" (click)="selectView('artworks')">معرض الأعمال ←</button></div><div class="art-mosaic" *ngIf="artworks.length"><div class="mosaic-main"><img [src]="artworks[0].images[0]?.url" [alt]="artworks[0].titleAr"><div><span>{{ artworks[0].category.nameAr || 'عمل فني' }}</span><strong>{{ artworks[0].titleAr }}</strong></div></div><div class="mosaic-side"><img *ngFor="let artwork of artworks.slice(1, 3)" [src]="artwork.images[0]?.url" [alt]="artwork.titleAr"></div></div><div *ngIf="!artworks.length" class="empty-art-note">لا توجد أعمال فنية بعد.</div></section></div></section><app-artworks-page [visible]="active === 'artworks'"></app-artworks-page><app-client-requests-page [visible]="active === 'requests'"></app-client-requests-page><app-orders-page [visible]="active === 'orders'"></app-orders-page><app-courses-page [visible]="active === 'courses'"></app-courses-page><app-categories-page [visible]="active === 'categories'"></app-categories-page><app-content-page [visible]="active === 'content'"></app-content-page></div></main></div>
+<div class="app-shell">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.is-open]="sidebarOpen">
+    <div class="sidebar-top">
+      <div class="brand-lockup">
+        <div class="brand-mark">▥</div>
+        <div>
+          <strong>AnasYa3qub</strong>
+          <span>لوحة الإدارة</span>
+        </div>
+      </div>
+      <button type="button" class="icon-button close-sidebar-btn" (click)="closeSidebar()" title="إغلاق القائمة">✕</button>
+    </div>
+    <div class="sidebar-caption">مساحة العمل</div>
+    <nav>
+      <button *ngFor="let item of navItems" 
+              class="nav-item" 
+              [class.active]="isActive(item.key)" 
+              (click)="selectViewAndClose(item.key)">
+        <span class="nav-symbol">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+        <i *ngIf="item.key === 'orders' && orders.length" class="nav-count">{{ orders.length }}</i>
+        <i *ngIf="item.key === 'requests' && clientRequests.length" class="nav-count">{{ clientRequests.length }}</i>
+      </button>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <button type="button" class="nav-item logout" (click)="logout()">
+      <span class="nav-symbol">↪</span>
+      <span>تسجيل الخروج</span>
+    </button>
+    <div class="sidebar-footer">
+      <span class="status-dot"></span> 
+      النظام متصل ويعمل بنجاح 
+      <span>v1.0</span>
+    </div>
+  </aside>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="sidebar-backdrop" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="topbar-heading">
+        <!-- Artist Palette Mobile Toggle Trigger -->
+        <button type="button" class="artist-toggle-btn mobile-menu-trigger" (click)="toggleSidebar()" title="فتح قائمة المرسم">
+          <svg class="art-palette-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.5 2 2 6.5 2 12c0 3.6 2.1 6.7 5.2 8.2.4.2.8-.1.8-.5v-.7c0-.8.7-1.5 1.5-1.5h1.8c4 0 7.2-3.2 7.2-7.2C18.5 5.7 15.6 2 12 2z"/>
+            <circle cx="7.5" cy="10.5" r="1.1" fill="currentColor"/>
+            <circle cx="10.5" cy="7.5" r="1.1" fill="currentColor"/>
+            <circle cx="14.5" cy="8" r="1.1" fill="currentColor"/>
+            <circle cx="16" cy="11.5" r="1.1" fill="currentColor"/>
+            <path d="M19 14.5l3.5 3.5c.4.4.4 1 0 1.4l-.6.6c-.4.4-1 .4-1.4 0L17 16.5"/>
+          </svg>
+          <span class="toggle-label">القائمة</span>
+        </button>
+        <span class="mobile-breadcrumb">لوحة التحكم /</span>
+        <h1>{{ pageTitle }}</h1>
+        <p>{{ pageSubtitle }}</p>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="search-box">
+          ⌕
+          <input placeholder="ابحثي في المرسم" (input)="globalSearch($event)">
+          <kbd>⌘ K</kbd>
+        </div>
+        <button type="button" class="icon-button" (click)="action('لا توجد تنبيهات جديدة')">♢</button>
+        <button type="button" class="avatar-button">م</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <section *ngIf="active === 'overview'" class="page-stack">
+        <section class="welcome-banner">
+          <div class="banner-art">
+            <div class="banner-circle circle-one"></div>
+            <div class="banner-circle circle-two"></div>
+            <span class="banner-script">فَنّ</span>
+          </div>
+          <div class="welcome-copy">
+            <span class="eyebrow light">بيانات مباشرة</span>
+            <h2>مساحة إدارة AnasYa3qub <span>✦</span></h2>
+            <p>إدارة الأعمال والطلبات والكورسات ومحتوى المعرض من مكان واحد.</p>
+          </div>
+          <button type="button" class="banner-action" (click)="selectView('artworks')">إضافة عمل جديد ＋</button>
+        </section>
+
+        <div class="metrics-grid">
+          <article *ngFor="let stat of stats; let i = index" class="metric-card" [class]="'metric-' + stat.tone">
+            <div class="metric-top">
+              <div class="metric-icon">{{ stat.icon }}</div>
+              <span class="metric-index">٠{{ i + 1 }}</span>
+            </div>
+            <span class="metric-label">{{ stat.label }}</span>
+            <strong>{{ stat.value }}</strong>
+            <div class="metric-delta">{{ stat.delta }}</div>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel orders-panel">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">آخر الحركة</span>
+                <h2>الطلبات الأخيرة</h2>
+              </div>
+              <button type="button" class="text-button" (click)="selectView('orders')">كل الطلبات ←</button>
+            </div>
+            <div class="order-table">
+              <div class="table-head">
+                <span>رقم الطلب</span>
+                <span>العميلة</span>
+                <span>العنصر</span>
+                <span>الحالة</span>
+                <span>الإجمالي</span>
+              </div>
+              <div *ngFor="let order of orders.slice(0, 5)" class="table-row">
+                <span class="order-id">{{ order.orderNumber }}</span>
+                <span class="customer-cell">
+                  <span class="mini-avatar">{{ order.customerName.charAt(0) }}</span>
+                  {{ order.customerName }}
+                </span>
+                <span class="muted-cell">{{ order.items.length || 0 }} عنصر</span>
+                <span>
+                  <span class="status-pill" [class]="statusTone(order.orderStatus)">
+                    <i></i>{{ statusLabel(order.orderStatus) }}
+                  </span>
+                </span>
+                <strong class="amount-cell">{{ order.totalAmount }} ج.م</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel pulse-panel">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">المعرض الآن</span>
+                <h2>أحدث الأعمال</h2>
+              </div>
+              <button type="button" class="text-button" (click)="selectView('artworks')">معرض الأعمال ←</button>
+            </div>
+            <div class="art-mosaic" *ngIf="artworks.length">
+              <div class="mosaic-main">
+                <img [src]="artworks[0].images[0]?.url" [alt]="artworks[0].titleAr">
+                <div>
+                  <span>{{ artworks[0].category.nameAr || 'عمل فني' }}</span>
+                  <strong>{{ artworks[0].titleAr }}</strong>
+                </div>
+              </div>
+              <div class="mosaic-side">
+                <img *ngFor="let artwork of artworks.slice(1, 3)" [src]="artwork.images[0]?.url" [alt]="artwork.titleAr">
+              </div>
+            </div>
+            <div *ngIf="!artworks.length" class="empty-art-note">لا توجد أعمال فنية بعد.</div>
+          </section>
+        </div>
+      </section>
+
+      <app-artworks-page [visible]="active === 'artworks'"></app-artworks-page>
+      <app-client-requests-page [visible]="active === 'requests'"></app-client-requests-page>
+      <app-orders-page [visible]="active === 'orders'"></app-orders-page>
+      <app-courses-page [visible]="active === 'courses'"></app-courses-page>
+      <app-categories-page [visible]="active === 'categories'"></app-categories-page>
+      <app-content-page [visible]="active === 'content'"></app-content-page>
+    </div>
+  </main>
+</div>

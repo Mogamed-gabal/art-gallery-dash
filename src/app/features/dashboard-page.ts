@@ -44,6 +44,7 @@ export class DashboardPageComponent implements OnInit {
   artworkFilter = 'الكل';
   orderFilter = 'الكل';
   toastMessage = '';
+  sidebarOpen = false;
   navItems = dashboardNav;
   artworks: Artwork[] = [];
   courses: Course[] = [];
@@ -98,6 +99,9 @@ export class DashboardPageComponent implements OnInit {
   }
 
   selectView(view: ViewKey) { this.active = view; }
+  toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; }
+  closeSidebar() { this.sidebarOpen = false; }
+  selectViewAndClose(view: ViewKey) { this.selectView(view); this.closeSidebar(); }
   refresh() { this.loadRemote(); this.notifications.success('تم تحديث البيانات'); }
   action(message: string) { this.notifications.info(message); }
   isActive(key: ViewKey) { return this.active === key; }
