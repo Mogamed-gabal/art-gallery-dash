@@ -7,5 +7,6 @@ export interface Order { id: string; orderNumber: string; customerName: string; 
 export interface Course { id: string; title: string; description: string; externalUrl: string; welcomeVideoUrl?: string | null; isActive: boolean; createdAt: string; updatedAt: string; }
 export interface SiteContent { hero: { titleAr: string; titleEn: string; subtitleAr: string; subtitleEn: string; imageUrl: string } | null; about: { titleAr: string; titleEn: string; bioAr: string; bioEn: string; image1Url: string; image2Url: string } | null; contact: { titleAr: string; titleEn: string; descriptionAr: string; descriptionEn: string; phone: string; whatsapp: string; email: string; socialLinks?: Record<string, string> } | null; }
 export interface PaginatedResponse<T> { items: T[]; meta: { page: number; limit: number; total: number; totalPages: number }; }
-export interface ClientRequest { id: string; name?: string; phone: string; whatsapp?: string; email?: string; description: string; images: string[]; createdAt: string; }
+export interface ClientRequestImage { url: string; publicId?: string; }
+export interface ClientRequest { id: string; name?: string; phone: string; whatsapp?: string; email?: string; description: string; images: (string | ClientRequestImage)[]; status?: 'NEW' | 'CONTACTED' | 'CLOSED'; createdAt: string; }
 export type ApiPayload<T> = { success: true; statusCode: number; data: T; message: string };

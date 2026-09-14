@@ -56,8 +56,8 @@
       <div class="request-card__gallery" *ngIf="req.images && req.images.length">
         <span class="gallery-label">الصور المرجعية المرفقة ({{ req.images.length }} صور):</span>
         <div class="images-thumbs">
-          <div *ngFor="let img of req.images" class="thumb-wrap" (click)="openImage(img)">
-            <img [src]="img" alt="صورة مرجعية" loading="lazy" />
+          <div *ngFor="let img of req.images" class="thumb-wrap" (click)="openImage(img, $event)">
+            <img [src]="getImageUrl(img)" alt="صورة مرجعية" loading="lazy" />
             <span class="zoom-badge">🔍</span>
           </div>
         </div>
@@ -68,10 +68,10 @@
   <!-- Image Modal -->
   <div *ngIf="selectedImageModal" class="img-modal-backdrop" (click)="closeModal()">
     <div class="img-modal-content" (click)="$event.stopPropagation()">
-      <button class="modal-close" (click)="closeModal()">✕</button>
-      <img [src]="selectedImageModal" alt="صورة مكبرة" />
+      <button type="button" class="modal-close" (click)="closeModal()" aria-label="إغلاق">✕</button>
+      <img [src]="selectedImageModal" alt="معاينة الصورة بالحجم الكامل" />
       <div class="modal-actions">
-        <a [href]="selectedImageModal" target="_blank" class="soft-button">فتح الصورة بالحجم الأصلي ↗</a>
+        <a [href]="selectedImageModal" target="_blank" rel="noopener noreferrer" class="soft-button">فتح الصورة بالحجم الأصلي ↗</a>
       </div>
     </div>
   </div>

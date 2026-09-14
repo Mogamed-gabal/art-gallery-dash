@@ -57,8 +57,21 @@ export class ClientRequestsPageComponent implements OnInit {
     return `https://wa.me/${clean}?text=${text}`;
   }
 
-  openImage(url: string) {
-    this.selectedImageModal = url;
+  getImageUrl(img: any): string {
+    if (!img) return '';
+    if (typeof img === 'string') return img;
+    return img.url || img.secureUrl || '';
+  }
+
+  openImage(img: any, event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const url = this.getImageUrl(img);
+    if (url) {
+      this.selectedImageModal = url;
+    }
   }
 
   closeModal() {
